@@ -69,20 +69,29 @@ def main():
                 f"kN  : {force_kn:,.2f} kN\n"
                 f"kgf : {force_kgf:,.2f} kgf"
             )
+            copy_button.state(["!disabled"])
         except (ValueError, KeyError) as error:
             result_text.set(f"오류: {error}")
+            copy_button.state(["disabled"])
             value_entry.focus_set()
+
+    def copy_result():
+        root.clipboard_clear()
+        root.clipboard_append(result_text.get())
 
     def clear_input():
         input_value.set("")
         input_unit.set("kN")
         result_text.set("값과 단위를 입력한 뒤 변환 버튼을 누르세요.")
+        copy_button.state(["disabled"])
         value_entry.focus_set()
 
     button_frame = ttk.Frame(frame)
     button_frame.pack()
     ttk.Button(button_frame, text="변환", command=calculate).grid(row=0, column=0, padx=4)
     ttk.Button(button_frame, text="입력 지우기", command=clear_input).grid(row=0, column=1, padx=4)
+    copy_button = ttk.Button(button_frame, text="결과 복사", command=copy_result, state="disabled")
+    copy_button.grid(row=0, column=2, padx=4)
 
     value_entry.bind("<Return>", lambda event: calculate())
     value_entry.focus_set()
